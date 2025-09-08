@@ -1,236 +1,487 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guide GitHub Pages - Calcul de Revient</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1000px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #eaeaea;
-        }
-        .step-card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
-            transition: transform 0.3s;
-        }
-        .step-card:hover {
-            transform: translateY(-5px);
-        }
-        .step-number {
-            width: 40px;
-            height: 40px;
-            background: #6c5ce7;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-right: 15px;
-        }
-        .screenshot {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 5px;
-            margin: 10px 0;
-            max-width: 100%;
-        }
-        .code {
-            background: #2d3436;
-            color: #dfe6e9;
-            padding: 15px;
-            border-radius: 5px;
-            font-family: monospace;
-            margin: 10px 0;
-            overflow-x: auto;
-        }
-        .tips {
-            background: #fff9e6;
-            border-left: 4px solid #ffd43b;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 0 5px 5px 0;
-        }
-        .btn-github {
-            background: #6e5494;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            display: inline-block;
-            margin: 10px 0;
-            transition: background 0.3s;
-        }
-        .btn-github:hover {
-            background: #56457a;
-            color: white;
-        }
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            color: #666;
-            font-size: 0.9rem;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calcul de revient — Tunisie</title>
+  <!-- TailwindCSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--card:255 255 255;--muted:248 250 252}
+    html,body{height:100%}
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial}
+    .card{background:rgba(var(--card)/1); box-shadow:0 10px 25px rgba(0,0,0,.05)}
+    .grid-autofit{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:0.75rem}
+    .label{font-size:.85rem; color:#334155}
+    .input{border:1px solid #e5e7eb; border-radius:.75rem; padding:.6rem .8rem}
+    .input:focus{outline:2px solid #6366f1; outline-offset:2px}
+  </style>
+  <!-- SheetJS for Excel export -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- FileSaver (optional fallback) -->
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Guide d'Hébergement sur GitHub Pages</h1>
-            <p class="lead">Comment mettre en ligne votre application de calcul de revient</p>
-        </div>
+<body class="min-h-screen bg-slate-50 text-slate-900">
+  <main id="app" class="max-w-6xl mx-auto p-4 sm:p-8">
 
-        <div class="alert alert-info">
-            <h4>À propos de GitHub Pages</h4>
-            <p>GitHub Pages est un service d'hébergement gratuit qui prend en charge les sites web statiques (HTML, CSS, JavaScript). Il est parfait pour partager votre application avec votre équipe.</p>
+    <!-- Header -->
+    <header class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-3">
+        <img id="logoPreview" src="" alt="Logo" class="h-10 w-10 rounded-xl object-contain bg-white hidden"/>
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-bold">Calcul de revient — Tunisie</h1>
+          <p class="text-sm text-slate-600">TVA 19% / 13% / 7%, droit de timbre facture, FODEC (optionnel), export Excel, partage 100% navigateur.</p>
         </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="btnLogout" class="hidden px-3 py-2 rounded-xl bg-slate-900 text-white text-sm">Se déconnecter</button>
+      </div>
+    </header>
 
-        <div class="card step-card">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="step-number">1</div>
-                    <h4 class="card-title mb-0">Créer un compte GitHub</h4>
-                </div>
-                <div class="mt-3">
-                    <p>Si vous n'avez pas de compte GitHub :</p>
-                    <ol>
-                        <li>Allez sur <a href="https://github.com/" target="_blank">github.com</a></li>
-                        <li>Cliquez sur "Sign up"</li>
-                        <li>Remplissez les informations requises</li>
-                        <li>Vérifiez votre adresse email</li>
-                    </ol>
-                    <a href="https://github.com/signup" target="_blank" class="btn-github">Créer un compte GitHub</a>
-                </div>
+    <!-- Auth Card -->
+    <section id="authCard" class="card rounded-2xl p-6 mb-8">
+      <div class="flex items-start gap-6 flex-col sm:flex-row">
+        <div class="grow">
+          <h2 class="text-xl font-semibold mb-1">Connexion</h2>
+          <p class="text-slate-600 mb-4 text-sm">Aucune base de données n'est nécessaire. Le mot de passe est stocké en local dans votre navigateur (vous pouvez le définir ci‑dessous). Pour partager l'application, déposez simplement ce fichier HTML sur un hébergeur statique (ex. GitHub Pages, Netlify, etc.).</p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="label">Nom de la société</label>
+              <input id="orgName" class="input w-full" placeholder="Ex: ACME Industries" />
             </div>
-        </div>
-
-        <div class="card step-card">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="step-number">2</div>
-                    <h4 class="card-title mb-0">Créer un nouveau dépôt</h4>
-                </div>
-                <div class="mt-3">
-                    <p>Un dépôt (repository) est l'endroit où votre code sera stocké :</p>
-                    <ol>
-                        <li>Cliquez sur le "+" en haut à droite et sélectionnez "New repository"</li>
-                        <li>Donnez un nom à votre dépôt (ex: "calcul-revient")</li>
-                        <li>Choisissez "Public"</li>
-                        <li>Cochez "Add a README file"</li>
-                        <li>Cliquez sur "Create repository"</li>
-                    </ol>
-                    <img src="https://docs.github.com/assets/cb-11427/images/help/repository/repo-create.png" alt="Création d'un dépôt" class="screenshot img-fluid">
-                </div>
+            <div>
+              <label class="label">Logo (URL https:// ...)</label>
+              <input id="orgLogoUrl" class="input w-full" placeholder="https://…/logo.png" />
             </div>
-        </div>
-
-        <div class="card step-card">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="step-number">3</div>
-                    <h4 class="card-title mb-0">Téléverser votre code</h4>
-                </div>
-                <div class="mt-3">
-                    <p>Ajoutez votre fichier HTML au dépôt :</p>
-                    <ol>
-                        <li>Dans votre dépôt, cliquez sur "Add file" → "Upload files"</li>
-                        <li>Glissez-déposez votre fichier HTML</li>
-                        <li>Nommez-le <code>index.html</code> pour qu'il soit la page d'accueil</li>
-                        <li>Ajoutez un message de commit</li>
-                        <li>Cliquez sur "Commit changes"</li>
-                    </ol>
-                    <img src="https://docs.github.com/assets/cb-30113/images/help/repository/upload-files-select.png" alt="Téléversement de fichiers" class="screenshot img-fluid">
-                </div>
+            <div>
+              <label class="label">E‑mail du manager (pour l'envoi)</label>
+              <input id="managerEmail" type="email" class="input w-full" placeholder="manager@exemple.tn" />
             </div>
-        </div>
-
-        <div class="card step-card">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="step-number">4</div>
-                    <h4 class="card-title mb-0">Activer GitHub Pages</h4>
-                </div>
-                <div class="mt-3">
-                    <p>Configurez GitHub Pages pour votre dépôt :</p>
-                    <ol>
-                        <li>Allez dans l'onglet "Settings" de votre dépôt</li>
-                        <li>Dans le menu de gauche, cliquez sur "Pages"</li>
-                        <li>Sous "Source", sélectionnez la branche "main"</li>
-                        <li>Laissez le dossier sur "/ (root)"</li>
-                        <li>Cliquez sur "Save"</li>
-                    </ol>
-                    <img src="https://docs.github.com/assets/cb-38849/images/help/pages/select-source.png" alt="Activation de GitHub Pages" class="screenshot img-fluid">
-                </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="label">Mot de passe</label>
+                <input id="password" type="password" class="input w-full" placeholder="••••••" />
+              </div>
+              <div>
+                <label class="label">Confirmer</label>
+                <input id="password2" type="password" class="input w-full" placeholder="••••••" />
+              </div>
             </div>
-        </div>
+          </div>
 
-        <div class="card step-card">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="step-number">5</div>
-                    <h4 class="card-title mb-0">Accéder à votre application</h4>
-                </div>
-                <div class="mt-3">
-                    <p>Votre application est maintenant en ligne :</p>
-                    <ol>
-                        <li>Attendez quelques minutes que GitHub déploie votre site</li>
-                        <li>Rafraîchissez la page des paramètres Pages</li>
-                        <li>Vous verrez l'URL de votre site (sous la forme <code>https://votrenom.github.io/nom-du-depot</code>)</li>
-                        <li>Cliquez sur ce lien pour accéder à votre application</li>
-                    </ol>
-                    <div class="tips">
-                        <strong>Conseil :</strong> Partagez ce lien avec votre équipe pour qu'ils puissent utiliser l'application.
-                    </div>
-                </div>
-            </div>
+          <div class="flex items-center gap-3 mt-4">
+            <button id="btnSaveProfile" class="px-4 py-2 rounded-xl bg-indigo-600 text-white">Enregistrer le profil</button>
+            <button id="btnLogin" class="px-4 py-2 rounded-xl bg-slate-900 text-white">Se connecter</button>
+            <span id="authMsg" class="text-sm text-slate-600"></span>
+          </div>
         </div>
+      </div>
+    </section>
 
-        <div class="tips">
-            <h4>Pour mettre à jour votre application</h4>
-            <p>Si vous devez modifier votre application :</p>
-            <ol>
-                <li>Modifiez votre fichier HTML localement</li>
-                <li>Retournez sur votre dépôt GitHub</li>
-                <li>Cliquez à nouveau sur "Add file" → "Upload files"</li>
-                <li>Téléversez la nouvelle version de votre fichier (cela écrasera l'ancienne version)</li>
-                <li>Les modifications seront automatiquement déployées sur GitHub Pages</li>
-            </ol>
+    <!-- App Card -->
+    <section id="appCard" class="hidden">
+      <!-- Product & Invoice info -->
+      <div class="card rounded-2xl p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Données article / facture</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="label">Référence produit</label>
+            <input id="ref" class="input w-full" placeholder="REF-001" />
+          </div>
+          <div>
+            <label class="label">Désignation (description)</label>
+            <input id="designation" class="input w-full" placeholder="Ex: Pièce usinée aluminium" />
+          </div>
+          <div>
+            <label class="label">Quantité</label>
+            <input id="qty" type="number" min="1" value="1" class="input w-full" />
+          </div>
+          <div>
+            <label class="label">Unité (ex: pièce, kg, m)</label>
+            <input id="unit" class="input w-full" placeholder="pièce" />
+          </div>
+          <div>
+            <label class="label">Client (optionnel)</label>
+            <input id="client" class="input w-full" placeholder="Client SA" />
+          </div>
+          <div>
+            <label class="label">Adresse client (optionnel)</label>
+            <input id="clientAddr" class="input w-full" placeholder="Rue, Ville, Code Postal" />
+          </div>
         </div>
+      </div>
 
-        <div class="text-center mt-4">
-            <h3>Votre application est maintenant en ligne !</h3>
-            <p>Partagez le lien avec votre équipe pour collaborer.</p>
-            <a href="https://github.com" target="_blank" class="btn-github">Commencer sur GitHub</a>
+      <!-- Cost inputs -->
+      <div class="card rounded-2xl p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Composantes du coût</h2>
+        <div class="grid-autofit">
+          <div>
+            <label class="label">Matières (TND)</label>
+            <input id="costMat" type="number" step="0.001" class="input w-full" value="0" />
+          </div>
+          <div>
+            <label class="label">Main d'œuvre directe (TND)</label>
+            <input id="costLabor" type="number" step="0.001" class="input w-full" value="0" />
+          </div>
+          <div>
+            <label class="label">Frais généraux / Overhead (TND)</label>
+            <input id="costOH" type="number" step="0.001" class="input w-full" value="0" />
+          </div>
+          <div>
+            <label class="label">Autres coûts (TND)</label>
+            <input id="costOther" type="number" step="0.001" class="input w-full" value="0" />
+          </div>
+          <div>
+            <label class="label">Marge bénéficiaire (%)</label>
+            <input id="marginPct" type="number" step="0.1" class="input w-full" value="20" />
+          </div>
         </div>
-    </div>
+        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="label">TVA (selon Loi de finances)</label>
+            <select id="tvaRate" class="input w-full">
+              <option value="19">19% (taux normal)</option>
+              <option value="13">13% (taux réduit — opérations spécifiques)</option>
+              <option value="7">7% (taux réduit — opérations spécifiques)</option>
+              <option value="0">Exonéré / suspension</option>
+            </select>
+          </div>
+          <div>
+            <label class="label">FODEC (1% CA HT — si applicable)</label>
+            <select id="fodec" class="input w-full">
+              <option value="0">Non</option>
+              <option value="1">Oui (1%)</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-2 mt-1">
+            <input id="timbre" type="checkbox" class="h-4 w-4" checked />
+            <label for="timbre" class="label">Droit de timbre facture (1 TND)</label>
+          </div>
+        </div>
+      </div>
 
-    <footer>
-        <p>Ce guide vous a été présenté pour vous aider à héberger votre application de calcul de revient sur GitHub Pages.</p>
-        <p>© 2023 - Guide GitHub Pages</p>
+      <!-- Results -->
+      <div class="card rounded-2xl p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Résultats</h2>
+        <div class="grid-autofit">
+          <div>
+            <div class="label">Coût de revient unitaire (TND)</div>
+            <div id="cru" class="text-2xl font-semibold">0.000</div>
+          </div>
+          <div>
+            <div class="label">Prix de vente unitaire HT (TND)</div>
+            <div id="pvHTu" class="text-2xl font-semibold">0.000</div>
+          </div>
+          <div>
+            <div class="label">TVA unitaire (TND)</div>
+            <div id="tvaU" class="text-2xl font-semibold">0.000</div>
+          </div>
+          <div>
+            <div class="label">FODEC unitaire (TND)</div>
+            <div id="fodecU" class="text-2xl font-semibold">0.000</div>
+          </div>
+          <div>
+            <div class="label">Prix de vente unitaire TTC (TND)</div>
+            <div id="pvTTCu" class="text-2xl font-semibold">0.000</div>
+          </div>
+        </div>
+        <div class="mt-4 grid-autofit">
+          <div>
+            <div class="label">Montant total HT (TND)</div>
+            <div id="totalHT" class="text-xl font-semibold">0.000</div>
+          </div>
+          <div>
+            <div class="label">TVA totale (TND)</div>
+            <div id="totalTVA" class="text-xl font-semibold">0.000</div>
+          </div>
+          <div>
+            <div class="label">FODEC total (TND)</div>
+            <div id="totalFODEC" class="text-xl font-semibold">0.000</div>
+          </div>
+          <div>
+            <div class="label">Timbre (TND)</div>
+            <div id="totalTimbre" class="text-xl font-semibold">0.000</div>
+          </div>
+          <div>
+            <div class="label">Total TTC (TND)</div>
+            <div id="totalTTC" class="text-2xl font-bold">0.000</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex flex-wrap gap-3 mb-8">
+        <button id="btnCalc" class="px-4 py-2 rounded-xl bg-indigo-600 text-white">Recalculer</button>
+        <button id="btnExcel" class="px-4 py-2 rounded-xl bg-emerald-600 text-white">Exporter en Excel</button>
+        <button id="btnMail" class="px-4 py-2 rounded-xl bg-slate-900 text-white">Envoyer par e‑mail</button>
+        <button id="btnSaveDraft" class="px-4 py-2 rounded-xl bg-slate-200">Enregistrer le brouillon</button>
+        <button id="btnLoadDraft" class="px-4 py-2 rounded-xl bg-slate-200">Charger le brouillon</button>
+        <button id="btnReset" class="px-4 py-2 rounded-xl bg-rose-600 text-white">Réinitialiser</button>
+      </div>
+
+      <!-- Compliance notes -->
+      <div class="rounded-2xl p-4 bg-white border border-slate-200">
+        <h3 class="font-semibold mb-2">Rappels réglementaires (Tunisie)</h3>
+        <ul class="list-disc pl-5 text-sm text-slate-700 space-y-1">
+          <li>TVA : taux normal 19% ; taux réduits 13% et 7% selon opérations spécifiques (voir textes applicables).</li>
+          <li>Droit de timbre sur facture : 1 TND (Loi de finances 2023).</li>
+          <li>FODEC : 1% du chiffre d'affaires HT pour certains produits/secteurs (optionnel ici selon votre cas).</li>
+        </ul>
+        <p class="text-xs text-slate-500 mt-2">Réglez les cases selon votre situation (exonération, suspension, liste FODEC, etc.). Cette application fournit un calcul indicatif à valider avec votre conseil fiscal.</p>
+      </div>
+    </section>
+
+    <footer class="mt-10 text-center text-xs text-slate-500">
+      <p>© <span id="year"></span> — Application HTML locale (aucun serveur requis). Hébergez ce fichier pour le partager avec votre équipe.</p>
+      <p class="mt-1">Sources (TVA, timbre, FODEC) : voir les liens d'aide dans le menu « ? » en haut à droite.</p>
     </footer>
+  </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Help floating button -->
+  <button id="helpBtn" title="Aide & Textes" class="fixed bottom-5 right-5 rounded-full px-4 py-3 bg-slate-900 text-white shadow-lg">?</button>
+
+  <!-- Help Modal -->
+  <dialog id="helpDlg" class="rounded-2xl p-0 w-[min(92vw,720px)]">
+    <div class="p-6">
+      <div class="flex items-start justify-between">
+        <h3 class="text-lg font-semibold">Liens utiles (TVA / Loi de finances — Tunisie)</h3>
+        <button onclick="helpDlg.close()" class="text-slate-500">✕</button>
+      </div>
+      <ul class="list-disc pl-5 text-slate-700 mt-3 text-sm space-y-2">
+        <li><a class="text-indigo-700 underline" target="_blank" href="https://taxsummaries.pwc.com/tunisia/corporate/other-taxes">PwC — VAT Tunisia (19%, 13%, 7%)</a></li>
+        <li><a class="text-indigo-700 underline" target="_blank" href="https://chaexpert.com/publication-de-la-loi-de-finances-2023/">LF 2023 — droit de timbre facture = 1 TND</a></li>
+        <li><a class="text-indigo-700 underline" target="_blank" href="https://facture-tunisie.com/412/fr/33/reglementations/principales-dispositions-de-la-loi-de-finances-2023">Facture‑Tunisie — timbre 1 TND</a></li>
+        <li><a class="text-indigo-700 underline" target="_blank" href="https://jibaya.tn/docs/note-commune-n07-2025/">Notes communes 2025 — LF 2025</a></li>
+        <li><a class="text-indigo-700 underline" target="_blank" href="https://swiver.io/blog/fodec/">FODEC — 1% (selon liste)</a></li>
+      </ul>
+      <p class="text-xs text-slate-500 mt-4">⚠️ Certaines mesures sont sectorielles (immobilier, etc.). Vérifiez votre cas réel.</p>
+    </div>
+  </dialog>
+
+  <script>
+    const $ = (id)=>document.getElementById(id);
+    const fmt = (n)=> (isNaN(n)?0:n).toLocaleString('fr-TN',{minimumFractionDigits:3,maximumFractionDigits:3});
+
+    const PROFILE_KEY = 'crtn_profile_v1';
+    const DRAFT_KEY   = 'crtn_draft_v1';
+
+    function loadProfile(){
+      try{ return JSON.parse(localStorage.getItem(PROFILE_KEY)||'{}'); }catch{ return {}; }
+    }
+    function saveProfile(p){ localStorage.setItem(PROFILE_KEY, JSON.stringify(p)); }
+
+    function applyProfile(){
+      const p = loadProfile();
+      if(p.orgName) $('orgName').value = p.orgName;
+      if(p.orgLogoUrl){ $('orgLogoUrl').value = p.orgLogoUrl; $('logoPreview').src=p.orgLogoUrl; $('logoPreview').classList.remove('hidden'); }
+      if(p.managerEmail) $('managerEmail').value = p.managerEmail;
+    }
+
+    function isLogged(){ return !!sessionStorage.getItem('crtn_logged'); }
+
+    function showApp(){
+      $('authCard').classList.add('hidden');
+      $('appCard').classList.remove('hidden');
+      $('btnLogout').classList.remove('hidden');
+    }
+    function showAuth(){
+      $('appCard').classList.add('hidden');
+      $('authCard').classList.remove('hidden');
+      $('btnLogout').classList.add('hidden');
+    }
+
+    function login(){
+      const p = loadProfile();
+      const pass = $('password').value;
+      if(!p.pass){ // first time, set it if confirm matches
+        const p2 = $('password2').value;
+        if(!pass || pass!==p2){ $('authMsg').textContent='Définissez et confirmez un mot de passe.'; return; }
+        p.pass = pass; saveProfile(p);
+      }
+      if(pass===p.pass){ sessionStorage.setItem('crtn_logged','1'); showApp(); $('authMsg').textContent='Connecté.'; }
+      else{ $('authMsg').textContent='Mot de passe incorrect.'; }
+    }
+
+    function saveProfileFromUI(){
+      const p = loadProfile();
+      p.orgName = $('orgName').value.trim();
+      p.orgLogoUrl = $('orgLogoUrl').value.trim();
+      p.managerEmail = $('managerEmail').value.trim();
+      if(p.orgLogoUrl){ $('logoPreview').src=p.orgLogoUrl; $('logoPreview').classList.remove('hidden'); }
+      saveProfile(p);
+      $('authMsg').textContent = 'Profil sauvegardé.';
+    }
+
+    function logout(){ sessionStorage.removeItem('crtn_logged'); showAuth(); }
+
+    // Calculation logic
+    function readNumber(id){
+      const v = parseFloat($(id).value.replace(',','.'));
+      return isNaN(v)?0:v;
+    }
+
+    function calculate(){
+      const qty = Math.max(1, parseFloat($('qty').value)||1);
+      const mat = readNumber('costMat');
+      const labor = readNumber('costLabor');
+      const oh = readNumber('costOH');
+      const other = readNumber('costOther');
+      const marginPct = Math.max(0, readNumber('marginPct'));
+      const tvaRate = parseFloat($('tvaRate').value)||0;
+      const fodecOn = parseInt($('fodec').value,10)===1;
+      const timbre = $('timbre').checked ? 1.0 : 0.0; // 1 TND
+
+      const totalCost = mat + labor + oh + other; // coût total lot (pour 1 unité si coûts unitaires)
+      const cru = totalCost; // on suppose coûts unitaires saisis
+
+      const pvHTu = cru * (1 + marginPct/100);
+      const fodecU = fodecOn ? (pvHTu * 0.01) : 0; // 1% du CA HT si applicable
+      const tvaU = ((pvHTu + fodecU) * (tvaRate/100)); // TVA après FODEC si applicable
+      const pvTTCu = pvHTu + fodecU + tvaU;
+
+      const totalHT = pvHTu * qty + fodecU * qty; // HT + FODEC (FODEC est hors TVA)
+      const totalTVA = tvaU * qty;
+      const totalFODEC = fodecU * qty;
+      const totalTimbre = timbre; // par facture
+      const totalTTC = totalHT + totalTVA + totalTimbre;
+
+      $('cru').textContent = fmt(cru);
+      $('pvHTu').textContent = fmt(pvHTu);
+      $('tvaU').textContent = fmt(tvaU);
+      $('fodecU').textContent = fmt(fodecU);
+      $('pvTTCu').textContent = fmt(pvTTCu);
+
+      $('totalHT').textContent = fmt(totalHT);
+      $('totalTVA').textContent = fmt(totalTVA);
+      $('totalFODEC').textContent = fmt(totalFODEC);
+      $('totalTimbre').textContent = fmt(totalTimbre);
+      $('totalTTC').textContent = fmt(totalTTC);
+
+      return {qty, cru, pvHTu, fodecU, tvaU, pvTTCu, totalHT, totalTVA, totalFODEC, totalTimbre, totalTTC};
+    }
+
+    function exportExcel(){
+      const profile = loadProfile();
+      const data = calculate();
+      const rows = [];
+      rows.push([profile.orgName||'', 'Facture / Devis']);
+      rows.push(['Client', $('client').value]);
+      rows.push(['Adresse', $('clientAddr').value]);
+      rows.push(['Date', new Date().toLocaleDateString('fr-TN')]);
+      rows.push([]);
+      rows.push(['Réf','Désignation','Qté','Unité','PU HT','FODEC U','TVA U','PU TTC','Montant HT','TVA','FODEC','Timbre','TOTAL TTC']);
+
+      const puht = data.pvHTu.toFixed(3);
+      const ufod = data.fodecU.toFixed(3);
+      const utva = data.tvaU.toFixed(3);
+      const puttc = data.pvTTCu.toFixed(3);
+      const mht = (data.pvHTu*data.qty + data.fodecU*data.qty).toFixed(3);
+      const mtva = (data.tvaU*data.qty).toFixed(3);
+      const mfodec = (data.fodecU*data.qty).toFixed(3);
+      const mtimbre = data.totalTimbre.toFixed(3);
+      const mttc = data.totalTTC.toFixed(3);
+
+      rows.push([
+        $('ref').value,
+        $('designation').value,
+        data.qty,
+        $('unit').value,
+        Number(puht), Number(ufod), Number(utva), Number(puttc),
+        Number(mht), Number(mtva), Number(mfodec), Number(mtimbre), Number(mttc)
+      ]);
+
+      rows.push([]);
+      rows.push(['Récapitulatif','','','','','', '', '', Number(mht), Number(mtva), Number(mfodec), Number(mtimbre), Number(mttc)]);
+
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      ws['!cols'] = [
+        {wch:10},{wch:40},{wch:6},{wch:8},{wch:10},{wch:10},{wch:10},{wch:10},{wch:12},{wch:10},{wch:10},{wch:10},{wch:12}
+      ];
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Facture');
+
+      const fname = `facture_${($('ref').value||'article').replace(/\W+/g,'_')}_${Date.now()}.xlsx`;
+      XLSX.writeFile(wb, fname);
+    }
+
+    function sendEmail(){
+      const profile = loadProfile();
+      const d = calculate();
+      const subject = encodeURIComponent(`Validation prix — ${$('ref').value||'Article'} (${new Date().toLocaleDateString('fr-TN')})`);
+      const lines = [];
+      lines.push(`Société : ${profile.orgName||''}`);
+      lines.push(`Produit : ${$('ref').value} — ${$('designation').value}`);
+      lines.push(`Quantité : ${$('qty').value} ${$('unit').value}`);
+      lines.push('---');
+      lines.push(`Coût de revient unitaire : ${fmt(d.cru)} TND`);
+      lines.push(`PU HT : ${fmt(d.pvHTu)} TND`);
+      lines.push(`FODEC U : ${fmt(d.fodecU)} TND`);
+      lines.push(`TVA U : ${fmt(d.tvaU)} TND`);
+      lines.push(`PU TTC : ${fmt(d.pvTTCu)} TND`);
+      lines.push('---');
+      lines.push(`Total HT : ${fmt(d.totalHT)} TND`);
+      lines.push(`Total TVA : ${fmt(d.totalTVA)} TND`);
+      lines.push(`Total FODEC : ${fmt(d.totalFODEC)} TND`);
+      lines.push(`Timbre : ${fmt(d.totalTimbre)} TND`);
+      lines.push(`Total TTC : ${fmt(d.totalTTC)} TND`);
+      lines.push('---');
+      lines.push('(PJ : exporter en Excel depuis l\'application et joindre au mail)');
+      const body = encodeURIComponent(lines.join('\n'));
+      const email = profile.managerEmail||'';
+      const href = `mailto:${encodeURIComponent(email)}?subject=${subject}&body=${body}`;
+      window.location.href = href;
+    }
+
+    function saveDraft(){
+      const draft = {
+        ref:$('ref').value, designation:$('designation').value, qty:$('qty').value, unit:$('unit').value,
+        client:$('client').value, clientAddr:$('clientAddr').value,
+        costMat:$('costMat').value, costLabor:$('costLabor').value, costOH:$('costOH').value, costOther:$('costOther').value,
+        marginPct:$('marginPct').value, tvaRate:$('tvaRate').value, fodec:$('fodec').value, timbre:$('timbre').checked
+      };
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      alert('Brouillon enregistré localement.');
+    }
+    function loadDraft(){
+      try{
+        const d = JSON.parse(localStorage.getItem(DRAFT_KEY)||'null');
+        if(!d) return alert('Aucun brouillon.');
+        $('ref').value=d.ref||''; $('designation').value=d.designation||''; $('qty').value=d.qty||1; $('unit').value=d.unit||'';
+        $('client').value=d.client||''; $('clientAddr').value=d.clientAddr||'';
+        $('costMat').value=d.costMat||0; $('costLabor').value=d.costLabor||0; $('costOH').value=d.costOH||0; $('costOther').value=d.costOther||0;
+        $('marginPct').value=d.marginPct||0; $('tvaRate').value=d.tvaRate||'19'; $('fodec').value=d.fodec||'0'; $('timbre').checked=!!d.timbre;
+        calculate();
+      }catch(e){ alert('Erreur de lecture du brouillon.'); }
+    }
+
+    function resetAll(){
+      ['ref','designation','qty','unit','client','clientAddr','costMat','costLabor','costOH','costOther','marginPct'].forEach(id=>$(id).value='');
+      $('qty').value=1; $('marginPct').value=20; $('tvaRate').value='19'; $('fodec').value='0'; $('timbre').checked=true; calculate();
+    }
+
+    // Events
+    $('btnSaveProfile').addEventListener('click', saveProfileFromUI);
+    $('btnLogin').addEventListener('click', login);
+    $('btnLogout').addEventListener('click', logout);
+
+    $('btnCalc').addEventListener('click', calculate);
+    $('btnExcel').addEventListener('click', exportExcel);
+    $('btnMail').addEventListener('click', sendEmail);
+    $('btnSaveDraft').addEventListener('click', saveDraft);
+    $('btnLoadDraft').addEventListener('click', loadDraft);
+    $('btnReset').addEventListener('click', resetAll);
+
+    $('helpBtn').addEventListener('click', ()=> $('helpDlg').showModal());
+
+    // Init
+    $('year').textContent = new Date().getFullYear();
+    applyProfile();
+    if(isLogged()) showApp(); else showAuth();
+    calculate();
+  </script>
 </body>
 </html>
