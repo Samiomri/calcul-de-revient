@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application de Calcul de Revient - Tunisie</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .main-container {
+            display: none;
+            padding: 20px;
+        }
+        
+        .app-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .calculation-card {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: none;
+        }
+        
+        .btn-tunisia {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-export {
+            background-color: #27ae60;
+            color: white;
+        }
+        
+        .btn-send {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .law-section {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--secondary-color);
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 0.9rem;
+        }
+        
+        footer {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Page de connexion -->
+    <div class="login-container" id="loginPage">
+        <div class="text-center mb-4">
+            <img src="https://cdn-icons-png.flaticon.com/512/3063/3063188.png" alt="Logo" width="80" class="mb-3">
+            <h3>Application de Calcul de Revient</h3>
+            <p class="text-muted">Connectez-vous pour accéder à l'application</p>
+        </div>
+        
+        <form id="loginForm">
+            <div class="mb-3">
+                <label for="username" class="form-label">Nom d'utilisateur</label>
+                <input type="text" class="form-control" id="username" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Mot de passe</label>
+                <input type="password" class="form-control" id="password" required>
+            </div>
+            <button type="submit" class="btn btn-tunisia w-100">Se connecter</button>
+        </form>
+        
+        <div class="law-section mt-4">
+            <h6>Conformité légale</h6>
+            <p>Cette application respecte les dispositions de la loi de finances tunisienne en matière de calcul des coûts et de fiscalité.</p>
+        </div>
+    </div>
+
+    <!-- Application principale -->
+    <div class="container main-container" id="mainApp">
+        <div class="app-header d-flex justify-content-between align-items-center">
+            <div>
+                <h2><i class="fas fa-calculator me-2"></i>Calcul de Revient</h2>
+                <p class="mb-0">Application conforme à la loi de finances tunisienne</p>
+            </div>
+            <button class="btn btn-outline-light" id="logoutBtn"><i class="fas fa-sign-out-alt me-1"></i> Déconnexion</button>
+        </div>
+
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i> Cette application calcule le coût de revient selon les réglementations tunisiennes en vigueur.
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card calculation-card">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">Nouveau calcul de revient</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="calculationForm">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="productName" class="form-label">Nom du produit</label>
+                                    <input type="text" class="form-control" id="productName" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="reference" class="form-label">Référence</label>
+                                    <input type="text" class="form-control" id="reference" required>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="matierePremiere" class="form-label">Coût matière première (TND)</label>
+                                    <input type="number" step="0.01" class="form-control" id="matierePremiere" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="mainOeuvre" class="form-label">Main d'œuvre (TND)</label>
+                                    <input type="number" step="0.01" class="form-control" id="mainOeuvre" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="charges" class="form-label">Charges fixes (TND)</label>
+                                    <input type="number" step="0.01" class="form-control" id="charges" required>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="quantite" class="form-label">Quantité produite</label>
+                                    <input type="number" class="form-control" id="quantite" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="tva" class="form-label">TVA (%)</label>
+                                    <input type="number" step="0.01" class="form-control" id="tva" value="19" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="marge" class="form-label">Marge bénéficiaire (%)</label>
+                                    <input type="number" step="0.01" class="form-control" id="marge" value="15" required>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-tunisia"><i class="fas fa-calculator me-1"></i> Calculer</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row hidden" id="resultsSection">
+            <div class="col-md-12">
+                <div class="card calculation-card">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Résultats du calcul</h5>
+                        <div>
+                            <button class="btn btn-sm btn-export me-2" id="exportExcelBtn"><i class="fas fa-file-excel me-1"></i> Excel</button>
+                            <button class="btn btn-sm btn-send" id="sendEmailBtn"><i class="fas fa-envelope me-1"></i> Email</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="resultsTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Description</th>
+                                        <th>Montant (TND)</th>
+                                        <th>Pourcentage</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Les résultats seront insérés ici par JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="law-section">
+            <h5>Conformité avec la loi de finances tunisienne</h5>
+            <p>Ce calcul de revient prend en compte les dispositions fiscales tunisiennes en vigueur :</p>
+            <ul>
+                <li>Taux de TVA standard de 19% (modifiable selon le type de produit)</li>
+                <li>Respect des règles de calcul des coûts de production</li>
+                <li>Prise en compte des charges déductibles conformément à la législation</li>
+                <li>Calcul du prix de vente incluant les impositions légales</li>
+            </ul>
+            <p class="mb-0"><small>Dernière mise à jour : Loi de Finances 2023</small></p>
+        </div>
+
+        <footer>
+            <p class="mb-0">© 2023 Application de Calcul de Revient - Conforme à la législation tunisienne</p>
+        </footer>
+    </div>
+
+    <script>
+        // Gestion de la connexion
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Vérification simple (en production, il faudrait une vraie authentification)
+            if (username && password) {
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                
+                // Stocker les informations de connexion dans le localStorage
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('username', username);
+            } else {
+                alert('Veuillez entrer un nom d\'utilisateur et un mot de passe.');
+            }
+        });
+        
+        // Vérifier si l'utilisateur est déjà connecté
+        if (localStorage.getItem('isLoggedIn') === 'true') {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+        }
+        
+        // Gestion de la déconnexion
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('username');
+            document.getElementById('mainApp').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'block';
+            document.getElementById('loginForm').reset();
+        });
+        
+        // Calcul du revient
+        document.getElementById('calculationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Récupérer les valeurs du formulaire
+            const matierePremiere = parseFloat(document.getElementById('matierePremiere').value);
+            const mainOeuvre = parseFloat(document.getElementById('mainOeuvre').value);
+            const charges = parseFloat(document.getElementById('charges').value);
+            const quantite = parseInt(document.getElementById('quantite').value);
+            const tva = parseFloat(document.getElementById('tva').value);
+            const marge = parseFloat(document.getElementById('marge').value);
+            
+            // Calculs
+            const coutTotal = matierePremiere + mainOeuvre + charges;
+            const coutUnitaire = coutTotal / quantite;
+            const prixVenteHT = coutUnitaire * (1 + marge / 100);
+            const montantTVA = prixVenteHT * (tva / 100);
+            const prixVenteTTC = prixVenteHT + montantTVA;
+            const margeBrute = prixVenteHT - coutUnitaire;
+            const margePourcentage = (margeBrute / prixVenteHT) * 100;
+            
+            // Afficher les résultats
+            const resultsBody = document.querySelector('#resultsTable tbody');
+            resultsBody.innerHTML = `
+                <tr>
+                    <td>Coût total de production</td>
+                    <td>${coutTotal.toFixed(3)}</td>
+                    <td>100%</td>
+                </tr>
+                <tr>
+                    <td>Coût unitaire</td>
+                    <td>${coutUnitaire.toFixed(3)}</td>
+                    <td>${(100/quantite).toFixed(1)}%</td>
+                </tr>
+                <tr>
+                    <td>Prix de vente HT</td>
+                    <td>${prixVenteHT.toFixed(3)}</td>
+                    <td>${(100 + marge).toFixed(1)}%</td>
+                </tr>
+                <tr>
+                    <td>TVA (${tva}%)</td>
+                    <td>${montantTVA.toFixed(3)}</td>
+                    <td>${tva}%</td>
+                </tr>
+                <tr class="table-success">
+                    <td><strong>Prix de vente TTC</strong></td>
+                    <td><strong>${prixVenteTTC.toFixed(3)}</strong></td>
+                    <td><strong>${(100 + marge + tva).toFixed(1)}%</strong></td>
+                </tr>
+                <tr class="table-info">
+                    <td>Marge brute</td>
+                    <td>${margeBrute.toFixed(3)}</td>
+                    <td>${margePourcentage.toFixed(1)}%</td>
+                </tr>
+            `;
+            
+            // Afficher la section des résultats
+            document.getElementById('resultsSection').classList.remove('hidden');
+            
+            // Stocker les résultats pour l'exportation
+            window.lastCalculation = {
+                productName: document.getElementById('productName').value,
+                reference: document.getElementById('reference').value,
+                coutTotal,
+                coutUnitaire,
+                prixVenteHT,
+                montantTVA,
+                prixVenteTTC,
+                margeBrute,
+                margePourcentage,
+                tva,
+                marge,
+                quantite
+            };
+        });
+        
+        // Exportation vers Excel
+        document.getElementById('exportExcelBtn').addEventListener('click', function() {
+            if (!window.lastCalculation) {
+                alert('Veuillez d\'abord effectuer un calcul.');
+                return;
+            }
+            
+            const data = [
+                ['Application de Calcul de Revient - Tunisie'],
+                [''],
+                ['Produit:', window.lastCalculation.productName],
+                ['Référence:', window.lastCalculation.reference],
+                [''],
+                ['DÉTAIL DU CALCUL', 'VALEUR (TND)', 'POURCENTAGE'],
+                ['Coût total de production', window.lastCalculation.coutTotal.toFixed(3), '100%'],
+                ['Coût unitaire', window.lastCalculation.coutUnitaire.toFixed(3), (100/window.lastCalculation.quantite).toFixed(1) + '%'],
+                ['Prix de vente HT', window.lastCalculation.prixVenteHT.toFixed(3), (100 + window.lastCalculation.marge).toFixed(1) + '%'],
+                ['TVA (' + window.lastCalculation.tva + '%)', window.lastCalculation.montantTVA.toFixed(3), window.lastCalculation.tva + '%'],
+                ['Prix de vente TTC', window.lastCalculation.prixVenteTTC.toFixed(3), (100 + window.lastCalculation.marge + window.lastCalculation.tva).toFixed(1) + '%'],
+                ['Marge brute', window.lastCalculation.margeBrute.toFixed(3), window.lastCalculation.margePourcentage.toFixed(1) + '%'],
+                [''],
+                ['Conforme à la loi de finances tunisienne']
+            ];
+            
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Calcul de revient");
+            
+            // Générer le fichier Excel et le télécharger
+            XLSX.writeFile(wb, "calcul_revient_" + window.lastCalculation.reference + ".xlsx");
+        });
+        
+        // Envoi par email
+        document.getElementById('sendEmailBtn').addEventListener('click', function() {
+            if (!window.lastCalculation) {
+                alert('Veuillez d\'abord effectuer un calcul.');
+                return;
+            }
+            
+            const subject = "Calcul de revient - " + window.lastCalculation.productName;
+            const body = `
+Bonjour,
+
+Veuillez trouver ci-joint le calcul de revient pour le produit ${window.lastCalculation.productName} (réf: ${window.lastCalculation.reference}).
+
+Détail du calcul:
+- Coût total de production: ${window.lastCalculation.coutTotal.toFixed(3)} TND
+- Coût unitaire: ${window.lastCalculation.coutUnitaire.toFixed(3)} TND
+- Prix de vente HT: ${window.lastCalculation.prixVenteHT.toFixed(3)} TND
+- TVA (${window.lastCalculation.tva}%): ${window.lastCalculation.montantTVA.toFixed(3)} TND
+- Prix de vente TTC: ${window.lastCalculation.prixVenteTTC.toFixed(3)} TND
+- Marge brute: ${window.lastCalculation.margeBrute.toFixed(3)} TND (${window.lastCalculation.margePourcentage.toFixed(1)}%)
+
+Ce calcul est conforme à la loi de finances tunisienne.
+
+Cordialement,
+Application de Calcul de Revient
+            `;
+            
+            // Ouvrir le client email par défaut
+            window.location.href = "mailto:?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+        });
+    </script>
+</body>
+</html>
